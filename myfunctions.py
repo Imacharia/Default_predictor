@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.gridspec as gridspec
 
 # function to read data
-def read_data(data):
+def read_data():
     data = pd.read_excel('C:/Users/rianm/Documents/data science/Default_predictor/data/default of credit card clients.xls',index_col=0)
     return data
 
