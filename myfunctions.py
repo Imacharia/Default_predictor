@@ -3,11 +3,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.gridspec as gridspec
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, MinMaxScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
 
 # function to read data
 def read_data():
-    data = pd.read_excel('C:/Users/rianm/Documents/data science/Default_predictor/data/default of credit card clients.xls',index_col=0)
-    return data
+    return pd.read_excel('C:/Users/rianm/Documents/data science/Default_predictor/data/default of credit card clients.xls',index_col=0)
+
 
 
 def clean_data(data):
@@ -16,7 +25,7 @@ def clean_data(data):
     # Replacing column names to the dataset
     data = data.iloc[1:]
     data.columns = column_names
-    # replacing formating to have only the first letter capitalized
+    # replacing formatting to have only the first letter capitalized
     data = data.rename(columns=str.capitalize)
     data.rename(columns={'Default payment next month': 'Target'}, inplace=True)
     
@@ -37,11 +46,8 @@ def clean_data(data):
     data['Marriage'] = data.Marriage.astype('category')
     # Define function to map gender
     def map_gender(gender):
-        if gender == 1:
-            return 'Male'
-        else:
-            return 'Female'
-        
+        return 'Male' if gender == 1 else 'Female'
+    
     # Applying the function
     data['Sex'] = data['Sex'].apply(map_gender)
     
@@ -71,7 +77,7 @@ def clean_data(data):
     
     # Define a function to map the repayment status values to their corresponding groups
     def map_repayment_status(status):
-        if status == -1 or status == 0:
+        if status in [-1, 0]:
             return "Performing"
         elif status in [1, 2, 3]:
             return "Watch"
@@ -116,4 +122,35 @@ def clean_data(data):
     
     return data.copy()
 
+
+class ClassificationEvaluator:
+    def __init__(self,y_true, y_pred):
+        self.y_true = y_true
+        self.y_pred = y_pred
+        
+    def accuracy(self):
+        return accuracy_score(self.y_true, self.y_pred)
+    
+    def precision(self):
+        return precision_score(self.y_true, self.y_pred)
+    
+    def recall(self):
+        return recall_score(self.y_true, self.y_pred)
+    
+    def f1_score(self):
+        return f1_score(self.y_true, self.y_pred)
+    
+    def roc_auc(self):
+        return roc_auc_score(self.y_true, self.y_pred)
+    
+    def evaluate(self):
+        metrics = {
+            'Accuracy': self.accuracy(),
+            'Precision': self.precision(),
+            'Recall': self.recall(),
+            'F1-Score': self.f1_score(),
+            'ROC AUC': self.roc_auc(),
+        }
+        return metrics
+    
 
