@@ -18,8 +18,7 @@ def clean_data(data):
     data.columns = column_names
     # replacing formating to have only the first letter capitalized
     data = data.rename(columns=str.capitalize)
-    # Preview the data
-    data.head(10)
+    data.rename(columns={'Default payment next month': 'Target'}, inplace=True)
     
     # This function converts the columns to appropriate data type based on their contents
     def convert_columns(data):
@@ -36,7 +35,16 @@ def clean_data(data):
     data['Education'] = data.Education.astype('category')
     # Marriage column
     data['Marriage'] = data.Marriage.astype('category')
-
+    # Define function to map gender
+    def map_gender(gender):
+        if gender == 1:
+            return 'Male'
+        else:
+            return 'Female'
+        
+    # Applying the function
+    data['Sex'] = data['Sex'].apply(map_gender)
+    
     # Define a function to map the education level to their corresponding value
     def education_level(level):
         if level == 1:
