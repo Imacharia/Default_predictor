@@ -28,6 +28,7 @@ def clean_data(data):
     # replacing formatting to have only the first letter capitalized
     data = data.rename(columns=str.capitalize)
     data.rename(columns={'Default payment next month': 'Target'}, inplace=True)
+    data.drop_duplicates(inplace=True)
     
     # This function converts the columns to appropriate data type based on their contents
     def convert_columns(data):
